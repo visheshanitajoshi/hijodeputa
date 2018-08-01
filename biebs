@@ -1,0 +1,7 @@
+def biebs():
+  art= raw_input("Enter the artist : ")
+  if art.lower()=="justin bieber":
+    print "ur heading the right path"
+  else:
+    print "you got no chill"
+biebs()
