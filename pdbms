@@ -1,0 +1,604 @@
+import pickle
+import os
+import random
+
+# Check Valid name or not
+# Validity Rule :Must be at least 3 letter and only letter or space
+def Validname(s):
+    found=True
+    if len(s) < 3:
+        found=False
+    else:
+        for i in range(len(s)):
+            ch = s[i]
+            if not ch.isalpha() and not ch.isspace():
+                found=False
+    return found
+
+# Check valid date or not
+def ValidDate(s):  # S = "25-05-2017"
+    dd = int(s[0:2])  # extract Date form date value
+    mm = int(s[3:5])  # extract month from date value
+    yy = int(s[6:10])  # extract year from date value
+    
+    found=True
+    if mm<1 or mm > 12:
+        found=False
+    else:
+        # Check month number day is upto 31
+        if mm==1 or mm==3 or mm==5 or mm==7 or mm==8 or mm==10 or mm==12:
+            if dd<1 or dd>31:
+                found=False
+        elif mm==4 or mm==6 or mm==9 or mm==11:
+            if dd<1 or dd>30:
+                found=False
+        else:
+            if yy%100 ==0:
+                if yy%400==0:
+                    if dd<1 or dd>29:
+                        found=False
+                else:
+                    if dd<1 or dd>28:
+                        found=False
+            elif yy%4==0:
+                if dd<1 or dd>29:
+                    found=False
+            else:                
+                if dd<1 or dd>28:
+                    found = False
+    return found
+
+
+# ---------------------------------------------------------------------
+#       Player class Definition Start
+# ---------------------------------------------------------------------
+class player:
+    def __init__(self):
+        self.pid= 0
+        self.name= ""
+        self.type= ""
+        self.country= ""
+    def enter(self):
+        self.pid = input("Enter Player ID : ")
+        ch = False
+        while not ch:
+            self.name= raw_input("Enter Name of the Player: ")
+            ch = Validname(self.name)
+            if ch==False:
+                print "Please enter Valid name "
+        self.type= raw_input("Enter Player Type: ")
+        self.country= raw_input("Enter the Country: ")
+    def edit(self):
+        ch = 1
+        while ch != 5:
+            print "Player ID  : ",self.pid
+            print "Player Name: ", self.name
+            print "Player Type: ", self.type
+            print "Nationality: ", self.country
+            print "Edit 1.ID 2.Name 3.Type 4.Nationality 5.No more Edit"
+            ch = input("Enter the choice : ")
+            if ch==1:
+                self.pid = input("Enter Player ID : ")
+            elif ch==2:
+                self.name= raw_input("Enter Name of the Player: ")
+            elif ch==3:
+                self.type= raw_input("Enter Player Type: ")
+            elif ch==4:
+                self.country= raw_input("Enter the Country: ")
+            elif ch==5:
+                print "Update Completed !"
+            else:
+                print "Invalid Choice !"
+                
+    def display(self):
+        print "Player ID  : ",self.pid
+        print "Player Name: ", self.name
+        print "Player Type: ", self.type
+        print "Nationality: ", self.country
+    def show(self):
+        print self.pid,"\t",self.name,"\t",self.type,"\t",self.country,"\n",
+    def getpid(self):
+        return self.pid
+    def getname(self):
+        return self.name
+# ---------------------------------------------------------------------
+#       Player class Definition Ends
+# ---------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------
+#       Match class Definition Start
+# ---------------------------------------------------------------------
+
+class Match:
+    def __init__(self):
+        self.matchno = 0
+        self.matchdate = ""
+        self.venue = ""
+        self.team1 = ""
+        self.team2 = ""
+        self.winner = ""
+    def Enter(self):
+        valid = False
+        print " Match Details Entry Form "
+        print "**************************"
+        self.matchno = input("Match No.: ")
+        while valid == False :
+            self.matchdate = raw_input("Match Date [dd-mm-yyyy] : ")
+            valid = ValidDate(self.matchdate)
+            if valid==False:
+                print "Invalid Date. Please Re-enter "
+        self.venue = raw_input("Venue Name : ")
+        self.team1 = raw_input("First Team Name : ")
+        self.team2 = raw_input("Second Team Name : ")
+        n = random.randint(1,2)
+        if n==1:
+            self.winner = self.team1
+        else:
+            self.winner = self.team2
+    def Edit(self):
+        ch = 1
+        valid = False
+        while ch != 6:
+            print "Match Details Form "
+            print "****************** "
+            print "Match No. : ", self.matchno
+            print "Match Date : ",self.matchdate
+            print "First Team : ",self.team1
+            print "Second Team : ",self.team2
+            print "Edit 1.Match No 2.Date 3.Venue 4.First Team",
+            print "5.Second Team 6.No more Edit"
+            ch = input("Enter the choice : ")
+            if ch==1:
+                self.matchno = input("Match No.: ")
+            elif ch==2:
+                while valid == False :
+                    self.matchdate = raw_input("Match Date [dd-mm-yyyy] : ")
+                    valid = ValidDate(self.matchdate)
+                    if valid==False:
+                        print "Invalid Date. Please Re-enter "
+            elif ch==3:
+                self.venue = raw_input("Venue Name : ")
+            elif ch==4:
+                self.team1 = raw_input("First Team Name : ")
+            elif ch==5:
+                self.team2 = raw_input("Second Team Name : ")
+            elif ch==6:
+                print "Update Completed !"
+            else:
+                print "Invalid Choice !"
+        
+    def Display(self):
+        print "Match Details Form "
+        print "****************** "
+        print "Match No. : ", self.matchno
+        print "Match Date : ",self.matchdate
+        print "Venue Place : ",self.venue
+        print "First Team : ",self.team1
+        print "Second Team : ",self.team2
+        print "Winner Team : ",self.winner
+    def Show(self):
+        print self.matchno,"\t",self.matchdate,"\t",self.team1,"\t\t",
+        print self.team2,"\t",self.winner 
+    def getmatchno(self):
+        return self.matchno
+    def getteam1(self):
+        return self.team1
+    def getteam2(self):
+        return self.team2
+
+# ---------------------------------------------------------------------
+#       Match class Definition Ends
+# ---------------------------------------------------------------------
+
+
+
+# add the player record into Binary File
+def p_addrec():
+    print "Add the Player Record"
+    p1 = player()
+    p1.enter()
+    f = open("player.dat","ab")
+    pickle.dump(p1,f)
+    f.close()
+
+# Search the player record using Player ID
+def p_search_by_id():
+    print "Search by ID "
+    f= open("player.dat","rb")
+    p1= player()
+    found = 0
+    n= input("Enter the id: ")
+    try:
+        while True:
+            p1 = pickle.load(f)
+            if n== p1.getpid():
+                found = 1
+                p1.display()
+    except EOFError:
+        if found == 0:
+            print "record not found "
+        f.close()        
+
+# Search the player record using Player name
+def p_search_by_name():
+    print "Search by Name "
+    f= open("player.dat","rb")
+    p1= player()
+    found = 0
+    n= raw_input("enter the name of the player : ")
+    try:
+        while True:
+            p1= pickle.load(f)
+            if n== p1.name:
+                p1.display()
+                found= 1
+    except EOFError:
+        if found== 0:
+            print "-----player not recognised-----"
+        f.close()
+
+# Search the player record using Country name
+def p_search_by_country():
+    print "Search by Country"
+    f= open("player.dat","rb")
+    p1= player()
+    found= 0
+    c= raw_input("Enter the name of the country : ")
+    try:
+        while True:
+            p1= pickle.load(f)
+            if c== p1.country:
+                p1.display()
+                found = 1
+    except EOFError:
+        if found == 0:
+            print "-----country not recognised------"
+        f.close()
+
+# Search the player record using player ID and update the details
+def p_update():
+    print "Update the details "
+    f= open("player.dat","rb")
+    f1= open("temp.dat","wb")
+    p1= player()
+    found=0
+    n= input("Enter the ID of the player to be updated : ")
+    try:
+        while True:
+            p1= pickle.load(f)
+            if p1.getpid== n:
+                p1.edit()
+                found=1
+                pickle.dump(p1,f1)
+            else:
+                pickle.dump(p1,f1)
+    except EOFError:
+        if f==0:
+            print "-----record not found!!!-----"
+        f.close()
+        f1.close()
+        os.remove("player.dat")
+        os.rename("temp.dat","player.dat")
+
+# Search the player record using player ID and delete this record
+def p_delete():
+    print "Delete the Record "
+    f1 = open("player.dat","rb")
+    f2 = open("temp.dat","wb")
+    p1 = player()
+    found=0
+    n = input("Enter the player ID : ")
+    try:
+        while True:
+            p1 = pickle.load(f1)
+            if p1.getpid() == n:
+                p1.display()
+                ch = raw_input("Are you want to sure delete this record? y/n ")
+                if ch == "Y" or ch == "y":
+                    print "Deleted "
+                else:
+                    pickle.dump(p1,f2)
+                    print "Record not Deleted !"
+                found = 1
+            else:
+                pickle.dump(p1,f2)
+    except EOFError:
+        if found==0:
+            print "-----Record Not Found-----"
+        f1.close()
+        f2.close()
+        os.remove("player.dat")
+        os.rename("temp.dat","player.dat")
+
+# Show all player record in tabular form
+def p_showall():
+    print "Show All Player List"
+    p1 = player()
+    print "-----------------------------------------------------------------------------"
+    print "ID \tName \t\tType  \t\tCountry "
+    print"------------------------------------------------------------------------------"
+    f = open("player.dat","rb")
+    try:
+        while True:
+            p1 = pickle.load(f)
+            p1.show()
+    except EOFError:
+        f.close()
+
+def playermenu():
+    ch = 1
+    while ch != 8:
+        print "---------------------------------------------------------------"
+        print "|              Champions Trophy Management System             |"
+        print "---------------------------------------------------------------"
+        print "|               Made by : Vishesh Joshi (2017-18)             |"
+        print "---------------------------------------------------------------"
+        print " Player Menu "
+        print "-------------"
+        print "1.Add Record "
+        print "2.Search by ID"
+        print "3.Search by Name "
+        print "4.Search by Country "
+        print "5.Update Record "
+        print "6.Delete Record "
+        print "7.Show All Record "
+        print "8.Exit "
+        ch = input("Enter Choice : ")
+        if ch == 1:
+            p_addrec()
+        elif ch == 2:
+            p_search_by_id()
+        elif ch == 3:
+            p_search_by_name()
+        elif ch == 4:
+            p_search_by_country()
+        elif ch == 5:
+            p_update()
+        elif ch == 6:
+            p_delete()
+        elif ch == 7:
+            p_showall()
+        elif ch == 8:
+            print "Exit... "
+        else:
+            print "Invalid Choice"
+
+# Add the match record into file
+def m_addrec():
+    print "Add match Record "
+    m = Match()
+    F = open("match.dat","ab")
+    m.Enter()
+    pickle.dump(m,F)
+    F.close()
+
+# Search the match record using Match No.
+def m_search_by_no():
+    print "Search by Match No."
+    f= open("match.dat","rb")
+    m= Match()
+    found= 0
+    n= input("enter the match number: ")
+    try :
+        while True:
+            m= pickle.load(f)
+            if n== m.getmatchno():
+                m.Display()
+                found= 1
+    except EOFError:
+        if found ==0:
+            print "-----Record not found-----"
+        f.close()
+
+
+# Search the match record using team name
+def m_search_by_team():
+    print "Search by Team "
+    f= open("match.dat","rb")
+    m= Match()
+    found= 0
+    n= raw_input("enter the team name: ")
+    try:
+        while True:
+            m= pickle.load(f)
+            if n== m.getteam1() or n== m.getteam2():
+                m.Display()
+                found= 1
+    except EOFError:
+        if found== 0:
+            print "-----Record not found-----"
+        f.close()
+
+
+# Search the match record using match no. and
+# show the details of match with player list
+def m_details():
+    print "Match with Player Details "
+    found = 0
+    m = Match()
+    P1 = player()
+    P2 = player()        
+    F = open("match.dat","rb")
+    mno = input("Enter Match No : ")
+
+    # Search the match details using match number
+    try:
+        while True:
+            m= pickle.load(F)
+            if mno == m.getmatchno():
+                m.Display()
+                found = 1
+    except EOFError:
+        if found == 0:
+            print "-----country not recognised------"
+        F.close()
+
+    # Search successfull then
+    # copy the player record from player.dat into "team1.dat" file
+    # for First team player and "team2.dat" file for Second team player
+    if found == 1:
+        F1 = open("player.dat","rb")
+        F2 = open("team1.dat","wb")
+        F3 = open("team2.dat","wb")
+        P = player()
+        try:
+            while True:
+                P = pickle.load(F1)
+                if m.getteam1() == P.country:
+                    pickle.dump(P,F2)
+                elif m.getteam2() == P.country:
+                    pickle.dump(P,F3)
+        except EOFError:
+            F1.close()
+            F2.close()
+            F3.close()
+
+        # After copy open the player list file of team and read parallel
+        # one by one record and display in list form
+        F1 = open("team1.dat","rb")
+        F2 = open("team2.dat","rb")
+        n = 1
+        try:
+            while True:
+                P1 = pickle.load(F1) # read player record from team1
+                P2 = pickle.load(F2) # read player record from team2
+                print n,"\t",P1.getname(),"\t",
+                print n,"\t",P2.getname(),"\n",
+        except EOFError:
+            F1.close()
+            F2.close()
+    else:
+        print "Invalid Match No"
+
+# Search the match details using match number and update the details
+def m_update():
+    print "Match Update "
+    F1 = open("match.dat","rb")
+    F2 = open("temp.dat","wb")
+    M = Match()
+    no = input("Enter Match No : ")
+    found=0
+    try:
+        while True:
+            M = pickle.load(F1)
+            if no == M.getmatchno():
+                M.Edit()
+                found=1
+            pickle.dump(M,F2)
+    except EOFError:
+        F1.close()
+        F2.close()
+        os.remove("match.dat")
+        os.rename("temp.dat","match.dat")
+        if found==0:
+            print "Record not found"
+
+# Search the match record using match number and remove the record
+def m_delete():    
+    print "Match Delete "
+    f1 = open("match.dat","rb")
+    f2 = open("temp.dat","wb")
+    m = Match()
+    found=0
+    ch = 'y'
+    n = input("Enter the match number: ")
+    try:        
+        while True:
+            m = pickle.load(f1)
+            if n == m.getmatchno():
+                m.Display()
+                ch = raw_input("Are you want sure you want ot delete this record : ")
+                if ch=='y' or ch =='Y':
+                    print "Deleted"
+                else:
+                    pickle.dump(m,f2);
+                    print "Record not Deleted!"
+                found = 1
+            else:
+                pickle.dump(m,f2)
+    except EOFError:
+        if found==0:
+            print "-----Record Not Found-----"
+        f1.close()
+        f2.close()
+        os.remove("match.dat")
+        os.rename("temp.dat","match.dat")
+
+# Show the match list in tabular form
+def m_showall():
+    print "Match List"
+    m = Match()
+    print"------------------------------------------------------------------------------"
+    print "No. \tMatch Date \tFirst Team \t",
+    print "Second Team \tWinner Team"
+    print"------------------------------------------------------------------------------"
+    f = open("match.dat","rb")
+    try:
+        while True:
+            m= pickle.load(f)
+            m.Show()
+    except EOFError:
+        print"------------------------------------------------------------------------------"
+        f.close()
+
+def matchmenu():
+    ch = 1
+    while ch != 8:
+        print "---------------------------------------------------------------"
+        print "|              Champions Trophy Management System             |"
+        print "---------------------------------------------------------------"
+        print "|               Made by : Vishesh Joshi (2017-18)             |"
+        print "---------------------------------------------------------------"
+        print " Match Menu "
+        print "------------"
+        print "1.Add Record "
+        print "2.Search by Match No "
+        print "3.Search by Team "
+        print "4.Match Details with Player List"
+        print "5.Update Record "
+        print "6.Delete Record "
+        print "7.Show All Record "
+        print "8.Exit "
+        ch = input("Enter Choice : ")
+        if ch == 1:
+            m_addrec()
+        elif ch == 2:
+            m_search_by_no()
+        elif ch == 3:
+            m_search_by_team()
+        elif ch == 4:
+            m_details()
+        elif ch == 5:
+            m_update()
+        elif ch == 6:
+            m_delete()
+        elif ch == 7:
+            m_showall()
+        elif ch == 8:
+            print "Exit... "
+        else:
+            print "Invalid Choice"
+def mainmenu():
+    ch = 1
+    while ch != 3:
+        print "---------------------------------------------------------------"
+        print "|              Champions Trophy Management System             |"
+        print "---------------------------------------------------------------"
+        print "|               Made by : Vishesh Joshi (2017-18)             |"
+        print "---------------------------------------------------------------"
+        print " Main Menu "
+        print "-----------"
+        print "1.Player Menu "
+        print "2.Match Menu"
+        print "3.Exit "
+        ch = input("Enter Choice : ")
+        if ch == 1:
+            playermenu()
+        elif ch == 2:
+            matchmenu()
+        elif ch == 3:
+            print "Exit... "
+        else:
+            print "Invalid Choice"
+mainmenu()
